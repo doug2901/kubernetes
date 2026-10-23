@@ -1,0 +1,40 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: whisker-route
+  namespace: calico-system
+spec:
+  parentRefs:
+  - name: istio-gateway
+    namespace: istio-system
+  hostnames:
+  - "calico.lab.corp"
+  rules:
+  - matches:
+    - path: { type: PathPrefix, value: / }
+    backendRefs:
+    - name: whisker
+      port: 8081
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: whisker-from-istio-gateway
+  namespace: calico-system
+spec:
+  order: 0.5
+  tier: calico-system
+  selector: k8s-app == 'whisker'
+  types:
+  - Ingress
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      namespaceSelector: projectcalico.org/name == 'istio-system'
+      selector: gateway.networking.k8s.io/gateway-name == 'istio-gateway'
+    destination:
+      ports:
+      - 8081
+

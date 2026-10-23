@@ -1,0 +1,17 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: grafana-route
+  namespace: grafana
+spec:
+  parentRefs:
+  - name: istio-gateway
+    namespace: istio-system
+  hostnames:
+  - "grafana.lab.corp"
+  rules:
+  - matches:
+    - path: { type: PathPrefix, value: / }
+    backendRefs:
+    - name: grafana
+      port: 80
