@@ -1,0 +1,12 @@
+apiVersion: v1 # String
+kind: Pod  # String
+metadata: # Dictionary
+  name: mdc-app
+  labels: # Dictionary 
+    app: mdc-app       
+spec:
+  containers: # List
+    - name: mdc-app
+      image: iesodias/mdc-api-python:latest
+      ports:
+        - containerPort: 5000

@@ -1,0 +1,12 @@
+FROM fluentd:v1.16.2-1.1
+
+USER root
+
+# Instalar o plugin azure-storage-append-blob
+RUN gem install fluent-plugin-azurestorage
+
+# Set the root user to be the default for running the following commands
+USER fluent
+
+
+#docker build -t doug2901/fluentd-azure:v1.16.2-1.1 .

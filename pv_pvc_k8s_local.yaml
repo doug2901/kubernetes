@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: teste-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/d/teste
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: teste-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: teste-pod
+spec:
+  containers:
+    - name: teste-container
+      image: nginx:latest
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: teste-volume
+  volumes:
+    - name: teste-volume
+      persistentVolumeClaim:
+        claimName: teste-pvc

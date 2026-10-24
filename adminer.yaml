@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dev-adminer
+  namespace: dev
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+  namespace: dev
+  labels:
+    app: adminer
+    group: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+        group: db
+#      annotations:
+#        consul.hashicorp.com/connect-service: "dev-adminer"
+#        consul.hashicorp.com/connect-inject: "true"
+#        consul.hashicorp.com/transparent-proxy: "true"
+    spec:
+      serviceAccountName: dev-adminer
+      containers:
+        - name: adminer
+          image: adminer:standalone
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ADMINER_DESIGN
+              value: pepa-linha-dark
+            - name: ADMINER_DEFAULT_SERVER
+              value: postgres
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer
+  namespace: dev
+  labels: 
+    group: db
+spec:
+  type: ClusterIP
+  selector:
+    app: adminer
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adminer
+  namespace: dev
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: postgress.lab.corp
+    http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:  
+            service:
+              name: adminer
+              port:
+                number: 8080

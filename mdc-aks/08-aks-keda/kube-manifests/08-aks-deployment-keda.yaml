@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mdc-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mdc-app
+  namespace: mdc-app
+  labels:
+    app: mdc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mdc-app
+  template:
+    metadata:
+      labels:
+        app: mdc-app
+    spec:
+      containers:
+        - name: mdc-app
+          image: iesodias/mdc-api-python:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          # Requests & Limits   
+          resources:
+            requests:
+              cpu: "100m" 
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+          # Readiness Probe
+          readinessProbe:
+            httpGet:
+              path: /success # The endpoint to check for readiness
+              port: 5000     # The port to use for the readiness check
+            initialDelaySeconds: 5 # The number of seconds to wait before performing the first readiness check
+            periodSeconds: 10       # The period (in seconds) between each readiness check
+
+          # Liveness Probe
+          livenessProbe:
+            httpGet:
+              path: /success # The endpoint to check for liveness
+              port: 5000     # The port to use for the liveness check
+            initialDelaySeconds: 5 # The number of seconds to wait before performing the first liveness check
+            periodSeconds: 30       # The period (in seconds) between each liveness check
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdc-app
+  namespace: mdc-app
+  labels:
+    app: mdc-app
+spec:
+  type: ClusterIP
+  selector:
+    app: mdc-app
+  ports:
+    - port: 80
+      targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mdc-app
+  namespace: mdc-app
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:  
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mdc-app
+            port: 
+              number: 80

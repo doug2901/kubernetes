@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: fluentd
+  labels:
+    k8s-app: fluentd
+spec:
+  selector:
+    matchLabels:
+      name: fluentd
+  template:
+    metadata:
+      labels:
+        name: fluentd
+    spec:
+      containers:
+      - name: fluentd
+        image: doug2901/fluentd-azure:v1.16.2-1.1
+        env:
+        - name: FLUENTD_ARGS
+          value: "--no-supervisor -q"
+        - name: FLUENTD_CONF
+          value: "fluent.conf"
+        resources:
+          limits:
+            memory: 500Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 100m
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: config-volume
+          mountPath: /fluentd/etc
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: config-volume
+        configMap:
+          name: fluent-config

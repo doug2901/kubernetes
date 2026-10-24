@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod 
+metadata:
+  name: ubuntu-sleeper-2
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    #Entrypoint do contaiter
+    command: ["sleep"]
+    #Command do Container
+    args: ["5000"]

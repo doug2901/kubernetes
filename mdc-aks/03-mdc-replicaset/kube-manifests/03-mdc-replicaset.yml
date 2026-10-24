@@ -1,0 +1,23 @@
+apiVersion: apps/v1 # Specifies the Kubernetes API version to use for this object. In this case, it's using the apps/v1 version, which is specific for application-related resources.
+
+kind: ReplicaSet # Specifies the type of Kubernetes resource, which is a ReplicaSet. A ReplicaSet ensures that a specified number of pod replicas is always running in the cluster.
+
+metadata: # Contains metadata about the ReplicaSet.
+  name: mdc-app # The name of the ReplicaSet, set to "mdc-app".
+  labels: # Labels are key-value pairs used to identify and organize resources.
+    app: mdc-app # The label with key "app" and value "mdc-app" is assigned to this ReplicaSet.
+
+spec: # Specifies the desired state of the ReplicaSet.
+  replicas: 3 # The desired number of replicas (pods) to be maintained by the ReplicaSet, in this case, it's 3 replicas.
+  selector: # The selector determines which pods are selected by the ReplicaSet.
+    matchLabels: # Defines the selection criteria based on pod labels.
+      app: mdc-app # The selector will select pods that have the label "app" with the value "mdc-app".
+
+  template: # Defines the template used to create the pods managed by the ReplicaSet.
+    metadata:
+      labels:
+        app: mdc-app # The labels of the pod template, which are used to identify the pods created by this ReplicaSet.
+    spec:
+      containers: # A list of containers that will run in the pods created by the ReplicaSet.
+      - name: mdc-app # The name of the container, set to "mdc-app".
+        image: iesodias/mdc-api-python:latest # The Docker image to be used for the container. In this case, it's pulling the latest version of the "iesodias/mdc-api-python" image from Docker Hub.

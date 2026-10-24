@@ -1,0 +1,50 @@
+# Namespace definition
+apiVersion: v1 # Specifies the Kubernetes API version to use for this object. 
+kind: Namespace # Specifies the type of Kubernetes resource, which is a Namespace.
+metadata:
+  name: mdc-app # The name of the namespace, set to "mdc-app".
+---
+# Deployment resource definition
+apiVersion: apps/v1 # Specifies the Kubernetes API version to use for this object. In this case, it's using the apps/v1 version, which is specific for application-related resources.
+
+kind: Deployment # Specifies the type of Kubernetes resource, which is a Deployment. A Deployment is used to declaratively manage replica sets of pods.
+
+metadata: # Contains metadata about the Deployment.
+  name: mdc-app # The name of the Deployment, set to "mdc-app".
+  namespace: mdc-app
+spec: # Specifies the desired state of the Deployment.
+  replicas: 3 # The desired number of replicas (pods) to be maintained by the Deployment, in this case, it's 3 replicas.
+  selector: # The selector determines which pods are selected by the Deployment.
+    matchLabels: # Defines the selection criteria based on pod labels.
+      app: mdc-app # The selector will select pods that have the label "app" with the value "mdc-app".
+
+  template: # Defines the template used to create the pods managed by the Deployment.
+    metadata:
+      name: mdc-app # The name of the pod template, set to "mdc-app".
+      labels:
+        app: mdc-app # The labels of the pod template, which are used to identify the pods created by this Deployment.
+    spec:
+      containers: # A list of containers that will run in the pods created by the Deployment.
+        - name: mdc-app # The name of the container, set to "mdc-app".
+          image: iesodias/mdc-api-python:latest # The Docker image to be used for the container. In this case, it's pulling the latest version of the "iesodias/mdc-api-python" image from Docker Hub.
+          ports: 
+            - containerPort: 5000 # The containerPort specifies the port number the container listens on. In this case, it's exposing port 5000.
+
+---
+# Service resource definition
+apiVersion: v1 # Specifies the Kubernetes API version to use for this object. In this case, it's using the v1 version of the API.
+
+kind: Service # Specifies the type of Kubernetes resource, which is a Service. A Service provides networking and load balancing to pods.
+
+metadata: # Contains metadata about the Service.
+  name: mdc-app # The name of the Service, set to "mdc-app".
+  namespace: mdc-app
+spec: # Specifies the desired state of the Service.
+  type: LoadBalancer # The type of Service. This Service will be exposed as a LoadBalancer.
+  selector: # The selector determines which pods are targeted by the Service.
+    app: mdc-app # The Service will target pods that have the label "app" with the value "mdc-app".
+
+  ports: 
+    - name: http # The name of the port, set to "http".
+      port: 80 # The port number on which the Service will be exposed externally.
+      targetPort: 5000 # The target port number of the pods to which the incoming traffic will be forwarded.

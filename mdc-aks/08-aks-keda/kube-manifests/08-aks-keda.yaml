@@ -1,0 +1,21 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: mdc-app
+  namespace: mdc-app
+spec:
+  scaleTargetRef:
+    name: mdc-app
+  triggers:
+  - type: cron
+    metadata:
+    #O cron deve seguir o padrão minuto hora dia-mês mês dia-semana
+      timezone: "UTC" # fuso horário UTC
+      start: 45 12 * * * # início às 12:45 (no horário UTC)
+      end: 50 13 * * *  # término às 13:50 (no horário UTC)
+      desiredReplicas: "25" # réplicas desejadas: 25
+
+
+#helm repo add kedacore https://kedacore.github.io/charts
+#helm repo update
+#helm install keda kedacore/keda --namespace keda --create-namespace

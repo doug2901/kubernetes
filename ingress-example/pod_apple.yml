@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mantis 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mantis 
+  template:
+    metadata:
+      labels:
+        app: mantis 
+    spec:
+      containers:
+      - name: mantis
+        image: hashicorp/http-echo
+        ports:
+        - containerPort: 80
+        args:
+        - "-text=mantis"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mantis   
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: mantis 
