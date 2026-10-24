@@ -38,7 +38,7 @@ customConfig:
       type: azure_blob
       inputs:
         - my_remap_id
-      connection_string: "DefaultEndpointsProtocol=https;AccountName=dnfcorpterraform;AccountKey=cdxVMcyFfvBrCSJJGqmwtQ5JfkPfbuLYEEYSX9DJQiETu2rTEhVhuDt6V8McbD+UqeRp+VBHTg8Ue6rhozaX2A==;EndpointSuffix=core.windows.net"
+      connection_string: "DefaultEndpointsProtocol=https;AccountName=dnfcorpterraform;AccountKey=czdfdfdfef;EndpointSuffix=core.windows.net"
       container_name: akslogs
       blob_prefix: |-
         {{print "%Y%m%d/{{ container_name }}/"}}
